@@ -1,1 +1,4 @@
-GOOGLE_API_KEY = "AIzaSyAon-O48zcDiT5wo8lFmjyJC5VycHu86cw"
+import os
+from dotenv import load_dotenv
+load_dotenv()
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
