@@ -1,44 +1,44 @@
 # Lead Score Evaluation Criteria
 LEAD_SCORE_CRITERIA = """
-Evaluate the lead based on these five key dimensions:
+   Evaluate the lead based on these five key dimensions:
 
-1. DEMOGRAPHICS (Basic fit assessment)
-   - Age, location, educational level alignment with target profile
-   - Professional background and career stage
-   - Consider if demographics match ideal customer profile
+   1. DEMOGRAPHICS (Basic fit assessment)
+      - Age, location, educational level alignment with target profile
+      - Professional background and career stage
+      - Consider if demographics match ideal customer profile
 
-2. ACADEMIC BACKGROUND (Educational qualification)
-   - Relevant degrees, certifications, or credentials
-   - Academic performance and achievements
-   - Prior educational investments and completion rates
+   2. ACADEMIC BACKGROUND (Educational qualification)
+      - Relevant degrees, certifications, or credentials
+      - Academic performance and achievements
+      - Prior educational investments and completion rates
 
-3. ACTIVITIES HISTORY (Engagement level)
-   - Event attendance, workshop participation
-   - Response rate to communications
-   - Proactive inquiries and information requests
-   - Level of interaction with materials/resources
+   3. ACTIVITIES HISTORY (Engagement level)
+      - Event attendance, workshop participation
+      - Response rate to communications
+      - Proactive inquiries and information requests
+      - Level of interaction with materials/resources
 
-4. PAYMENT HISTORY (Financial reliability)
-   - Past payment punctuality and consistency
-   - Outstanding balances or payment issues
-   - Financial commitment patterns
-   - Ability and willingness to invest
+   4. PAYMENT HISTORY (Financial reliability)
+      - Past payment punctuality and consistency
+      - Outstanding balances or payment issues
+      - Financial commitment patterns
+      - Ability and willingness to invest
 
-5. LEARNING HISTORY (Academic performance & commitment)
-   - Course completion rates
-   - Assignment submission consistency
-   - Test scores and performance trends
-   - Active participation in learning activities
-   - Progress trajectory over time
+   5. LEARNING HISTORY (Academic performance & commitment)
+      - Course completion rates
+      - Assignment submission consistency
+      - Test scores and performance trends
+      - Active participation in learning activities
+      - Progress trajectory over time
 
-SCORING GUIDELINES:
-- 0-20: Very low potential (minimal fit or engagement)
-- 21-40: Low potential (some concerns in multiple areas)
-- 41-60: Moderate potential (average fit with room for improvement)
-- 61-80: High potential (strong indicators in most areas)
-- 81-100: Excellent potential (exceptional fit and engagement)
+   SCORING GUIDELINES:
+   - 0-20: Very low potential (minimal fit or engagement)
+   - 21-40: Low potential (some concerns in multiple areas)
+   - 41-60: Moderate potential (average fit with room for improvement)
+   - 61-80: High potential (strong indicators in most areas)
+   - 81-100: Excellent potential (exceptional fit and engagement)
 
-Consider both quantitative data and qualitative patterns. Balance all factors according to the provided weights.
+   Consider both quantitative data and qualitative patterns. Balance all factors according to the provided weights.
 """
 
 # Next Follow-Up Actions

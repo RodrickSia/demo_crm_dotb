@@ -8,39 +8,22 @@ from ..config.prompts import LEAD_SCORE_CRITERIA, NEXT_FOLLOWUP_ACTIONS
 from deepagents import create_deep_agent
 from ....shared.utils.helpers import readMDFiles
 from deepagents.backends.utils import create_file_data
+import json
 
 # Initialize LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    google_api_key=GOOGLE_API_KEY
+    model="gemini-2.5-flash-lite",
+    google_api_key=GOOGLE_API_KEY,
+    temperature=0.0 
 )
-LEAD_SCORE_SKILL = ""
+LEAD_SCORE_SKILL = "D:\\CRM_DOTB\\backend\\src\\modules\\crm_agent\\graph\\skills\\leadScore\\SKILL.md"
 ACTIVITY_SUMMARY_SKILL = ""
 NEXT_FOLLOWUP_ACTIONS = ""
 
-
-# TODO Create node in which it is implmeneted by the deepagents with the skillsMD
-"""
-from pydantic import BaseModel, Field
-from deepagents import create_deep_agent, CompiledSubAgent
-
-class SkillOutput(BaseModel):
-    summary: str = Field(description="Analysis summary")
-    score: float = Field(ge=0, le=1)
-
-deep_agent = create_deep_agent(
-    response_format=SkillOutput,  # Structured!
-    skills=["/skills/"]
-)
-
-subagent = CompiledSubAgent(
-    name="structured-skill",
-    description="Returns typed analysis.",
-    runnable=deep_agent
-)"""
 # Structured output node to classify intent
 def classifying_intent(state: AgentState) -> Command[Literal["generate_lead_score", "generate_followup_action", "generate_activity_summary"]]:
     """Route to appropriate node based on intent."""
+    assert state.intent is not None, "Intent must be set in state."
     goto = None
     if state.intent == "score":
         goto = "generate_lead_score"
@@ -57,10 +40,25 @@ def classifying_intent(state: AgentState) -> Command[Literal["generate_lead_scor
 LeadScoreSkillStr = readMDFiles(LEAD_SCORE_SKILL)
 leadScoreDeepAgent = create_deep_agent(
     context_schema=AgentState,
-    skills=["./skills/"],
+    skills=["/src/modules/crm_agent/graph/skills/leadScore/SKILL.md"],
     model=llm, 
 )
+agentResponse = leadScoreDeepAgent.invoke(
+    {   
+        
+        "messages": [
+            {
+                "role": "user",
+                "content": f""" Give me back the leadsocre skill aka the markdown file that you are being given
+                """,
+            }
+        ],
+        "files": {"/.skills/leadScore/SKILL.md": create_file_data(LeadScoreSkillStr)},
+    }
+)
+print(agentResponse)
 def generate_lead_score_deepagent(state: AgentState) -> Command:
+    # The response is a structred output enforce by the skill
     agentResponse = leadScoreDeepAgent.invoke(
         {   
             
@@ -75,12 +73,13 @@ def generate_lead_score_deepagent(state: AgentState) -> Command:
                     """,
                 }
             ],
-            "files": {"/leadscore.md": create_file_data(LeadScoreSkillStr)},
+            "files": {"/.skills/leadScore/SKILL.md": create_file_data(LeadScoreSkillStr)},
         },
             config={"configurable": {"thread_id": "123456"}},
         )
     # TODO make this return to evaluation Node
     # TODO fetch the agent Response and parse it onto the command
+    # agentResponse = json.loads(agentResponse)
     return Command(
         goto=END)
 
