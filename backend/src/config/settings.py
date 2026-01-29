@@ -10,6 +10,7 @@ SUPABASE_API_KEY = os.getenv('SUPABASE_API_KEY')
 assert SUPABASE_URL is not None, "SUPABASE_URL is not set in environment variables."
 assert SUPABASE_API_KEY is not None, "SUPABASE_API_KEY is not set in environment variables."
 
+# TABLES INDEX used for easy reference in services
 TABLES = [
     "Calls",
     "Journey",
