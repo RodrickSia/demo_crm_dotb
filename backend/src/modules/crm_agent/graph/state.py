@@ -26,7 +26,7 @@ class AgentState(BaseModel):
     followup_action: str = "Unknown"
     activity_summary: str = ""
     # Weighted attributes for lead scoring
-    weights: 'WeightedAtributes | None' = None
+    weights: WeightedAtributes
     # Explanations for each LLM-generated insight
     lead_score_explanation: str = ""
     followup_action_explanation: str = ""

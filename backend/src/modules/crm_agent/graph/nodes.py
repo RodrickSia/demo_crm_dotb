@@ -5,12 +5,18 @@ from langgraph.types import interrupt, Command
 from langchain_google_genai import ChatGoogleGenerativeAI
 from ..config.settings import GOOGLE_API_KEY
 from ..config.prompts import LEAD_SCORE_CRITERIA, NEXT_FOLLOWUP_ACTIONS
+from deepagents import create_deep_agent
+from ....shared.utils.helpers import readMDFiles
+from deepagents.backends.utils import create_file_data
 
 # Initialize LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash-lite",
+    model="gemini-2.5-flash",
     google_api_key=GOOGLE_API_KEY
 )
+LEAD_SCORE_SKILL = ""
+ACTIVITY_SUMMARY_SKILL = ""
+NEXT_FOLLOWUP_ACTIONS = ""
 
 
 # TODO Create node in which it is implmeneted by the deepagents with the skillsMD
@@ -45,6 +51,39 @@ def classifying_intent(state: AgentState) -> Command[Literal["generate_lead_scor
         
     assert goto is not None, "Invalid intent for classification."
     return Command(goto=goto)
+
+
+# Read MD files
+LeadScoreSkillStr = readMDFiles(LEAD_SCORE_SKILL)
+leadScoreDeepAgent = create_deep_agent(
+    context_schema=AgentState,
+    skills=["./skills/"],
+    model=llm, 
+)
+def generate_lead_score_deepagent(state: AgentState) -> Command:
+    agentResponse = leadScoreDeepAgent.invoke(
+        {   
+            
+            "messages": [
+                {
+                    "role": "user",
+                    "content": f"""You are an expert leadScorer. You will need to analyze this student profile and provide for me a lead score
+                    Here is the student data:
+                    {state.user.model_dump_json(indent=2)}
+                    You are also provided the weights for each criteria:
+                    {state.weights.model_dump_json(indent=2)}
+                    """,
+                }
+            ],
+            "files": {"/leadscore.md": create_file_data(LeadScoreSkillStr)},
+        },
+            config={"configurable": {"thread_id": "123456"}},
+        )
+    # TODO make this return to evaluation Node
+    # TODO fetch the agent Response and parse it onto the command
+    return Command(
+        goto=END)
+
 
 
 def generate_lead_score(state: AgentState) -> Command:
