@@ -12,7 +12,7 @@ This is the FastAPI-based backend for the CRM DOTB system. It follows a modular 
 - **`src/config/`**: Global database and system settings.
 
 ## 🏃 Running the Backend
-
+Remember to add a .env file and add all of the secrets being used in all the settings files of each module.
 ```bash
 conda activate backend
 cd backend
