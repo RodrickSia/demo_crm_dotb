@@ -11,14 +11,14 @@ assert SUPABASE_URL is not None, "SUPABASE_URL is not set in environment variabl
 assert SUPABASE_API_KEY is not None, "SUPABASE_API_KEY is not set in environment variables."
 
 # TABLES INDEX used for easy reference in services
-TABLES = [
-    "Calls",
-    "Journey",
-    "Student",
-    "attendance",
-    "enrollments",
-    "meetings",
-    "notes",
-    "receipts",
-    "tasks"
-]
+TABLES = {
+    "CALLS": "Calls",
+    "JOURNEY": "Journey",
+    "STUDENT": "Student",
+    "ATTENDANCE": "attendance",
+    "ENROLLMENTS": "enrollments",
+    "MEETINGS": "meetings",
+    "NOTES": "notes",
+    "RECEIPTS": "receipts",
+    "TASKS": "tasks"
+}
