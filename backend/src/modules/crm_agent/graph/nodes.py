@@ -55,40 +55,13 @@ LeadScoreSkillStr = readMDFiles(LEAD_SCORE_SKILL)
 #         ],
 #         "files": {"./skills/leadScore/SKILL.md": create_file_data(LeadScoreSkillStr)},
 #     }
-# )
+#
 leadScoreDeepAgent = create_deep_agent(
     context_schema=AgentState,
     system_prompt=LeadScoreSkillStr,
     model=llm, 
 )
-# agentResponse = leadScoreDeepAgent.invoke(
-#     {   
-        
-#         "messages": [
-#             {
-#                 "role": "user",
-#                 "content": f"""
-#                 You are an expert leadScorer. You will need to analyze this student profile and provide for me a lead score
-#                 Here is the student data:
-#                 age 15
-#                 grade: 10
-#                 math score 7.5
-#                 english score 8.0
-#                 payment history: ok
-#                 engagement: high
-#                 You are also provided the weights for each criteria:
-#     demographics: float = 0.1
-#     acedemic_background: float = 0.2
-#     activities_history: float = 0.2
-#     payment_history: float = 0.3
-#     learning_history: float = 0.3   
-#                 """,
-#             }
-#         ],
-#     }
-# )
-# modelMesage = agentResponse["messages"][-1].content[0]['text'] # A str represent a dict with {score, explanation}
-# print(json.loads(modelMesage))
+
 def generate_lead_score_deepagent(state: AgentState) -> Command:
     # The response is a structred output enforce by the skill
     agentResponse = leadScoreDeepAgent.invoke(
@@ -115,81 +88,6 @@ def generate_lead_score_deepagent(state: AgentState) -> Command:
         update={
             "lead_score": int(modelMessage["score"]),
             "lead_score_explanation": modelMessage["explanation"]
-        },
-        goto=END
-    )
-
-
-def generate_lead_score(state: AgentState) -> Command:
-    """Generate lead score based on user data and weighted attributes."""
-    user_data = state.user
-    weights = state.weights
-    
-    # Build weights description if provided
-    weights_description = ""
-    if weights:
-        weights_description = f"""
-APPLIED WEIGHTS (must sum to 100%):
-• Demographics: {weights.demographics * 100:.0f}%
-• Academic Background: {weights.acedemic_background * 100:.0f}%
-• Activities History: {weights.activities_history * 100:.0f}%
-• Payment History: {weights.payment_history * 100:.0f}%
-• Learning History: {weights.learning_history * 100:.0f}%
-"""
-    else:
-        weights_description = """
-APPLIED WEIGHTS (default distribution):
-• Demographics: 10%
-• Academic Background: 20%
-• Activities History: 20%
-• Payment History: 30%
-• Learning History: 20%
-"""
-    
-    
-    score_prompt = f"""You are an expert CRM analyst evaluating lead quality for an educational institution.
-
-{LEAD_SCORE_CRITERIA}
-
-{weights_description}
-
-USER DATA:
-{str(user_data)}
-
-TASK: Analyze the user data against the five criteria above, apply the specified weights, and calculate a comprehensive lead score.
-
-OUTPUT: Return ONLY a single integer between 0 and 100. No explanation, no text, just the number.
-"""
-    
-    score_response = llm.invoke(score_prompt)
-    score = score_response.content.strip()  # type: ignore
-    assert score is not None, "LLM did not return a lead score."
-    assert score.isdigit(), "Lead score is not a valid number."
-    
-    # Generate explanation
-    explanation_prompt = f"""You are an expert CRM analyst. You've assigned a lead score of {score}/100 to this prospect.
-
-{LEAD_SCORE_CRITERIA}
-
-{weights_description}
-
-USER DATA:
-{str(user_data)}
-SCORE: {score}
-TASK: Provide a concise 2-3 sentence explanation for why this lead received a score of {score}/100.
-Focus on the most impactful factors from the weighted criteria that influenced the score.
-Mention specific strengths or concerns identified in the data.
-
-OUTPUT: Write your explanation in clear, professional language and easy to understand.
-"""
-    
-    explanation_response = llm.invoke(explanation_prompt)
-    explanation = explanation_response.content.strip()  # type: ignore
-    
-    return Command(
-        update={
-            "lead_score": int(score),
-            "lead_score_explanation": explanation
         },
         goto=END
     )
@@ -284,7 +182,9 @@ OUTPUT: Write a 3-4 sentence professional summary that captures the lead's activ
 """
     
     summary_response = llm.invoke(summary_prompt)
-    summary = summary_response.content.strip()  # type: ignore
+    # TODO: FIX THE RESPONSE PARSING
+    summary = summary_response.content # type: ignore
+    print(summary)
     assert summary is not None, "LLM did not return an activity summary."
     
     # Generate insights and recommendations
@@ -303,8 +203,9 @@ OUTPUT: Write clear, actionable insights and recommendations (2-3 sentences tota
 """
     
     explanation_response = llm.invoke(explanation_prompt)
-    explanation = explanation_response.content.strip()  # type: ignore
-    
+    # TODO: FIX THE RESPONSE PARSING
+    explanation = explanation_response.content["input"][0]["text"]  # type: ignore
+    print(explanation)
     return Command(
         update={
             "activity_summary": summary,

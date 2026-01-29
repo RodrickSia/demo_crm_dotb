@@ -37,6 +37,7 @@ def get_all_data_by_user_id(user_id: str) -> AgentState:
             attendance=attendance,
             enrollments=enrollments
         ),
+        weights=WeightedAtributes(),
         intent="Unknown"
     )
     return user_data
