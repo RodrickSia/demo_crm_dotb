@@ -1,0 +1,17 @@
+from pydantic import BaseModel, Field
+from deepagents import create_deep_agent, CompiledSubAgent
+
+class SkillOutput(BaseModel):
+    summary: str = Field(description="Analysis summary")
+    score: float = Field(ge=0, le=1)
+
+deep_agent = create_deep_agent(
+    response_format=SkillOutput,  # Structured!
+    skills=["/skills/"]
+)
+
+subagent = CompiledSubAgent(
+    name="structured-skill",
+    description="Returns typed analysis.",
+    runnable=deep_agent
+)

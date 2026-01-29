@@ -3,10 +3,10 @@ from src.shared.api import fetch_lead_score, fetch_activity_summary, fetch_follo
 from src.shared.config import FOLLOWUP_ACTION_COLORS
 
 
-def render_lead_score_button(user_id):
+def render_lead_score_button(user_id, weights=None):
     if st.button("Generate Lead Score", key="score_btn", help="AI-powered lead scoring"):
         with st.spinner("Analyzing lead quality..."):
-            result = fetch_lead_score(user_id)
+            result = fetch_lead_score(user_id, weights)
             score = result.get("score", 0)
             explanation = result.get("explanation", "")
             

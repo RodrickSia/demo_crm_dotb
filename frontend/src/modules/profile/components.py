@@ -24,6 +24,31 @@ def render_user_selector(students_data):
     return selected_user_id
 
 
+def render_weight_sliders():
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Lead Scoring Weights")
+    with st.sidebar.expander("Adjust Weights", expanded=False):
+        demographics = st.slider("Demographics", 0.0, 1.0, 0.1, 0.05)
+        acedemic = st.slider("Academic Background", 0.0, 1.0, 0.2, 0.05)
+        activities = st.slider("Activities History", 0.0, 1.0, 0.2, 0.05)
+        payment = st.slider("Payment History", 0.0, 1.0, 0.3, 0.05)
+        learning = st.slider("Learning History", 0.0, 1.0, 0.2, 0.05)
+        
+        total = demographics + acedemic + activities + payment + learning
+        st.write(f"Total: {total:.2f}")
+        
+        if not (0.99 <= total <= 1.01):
+            st.warning("Weights should sum to 1.0")
+            
+    return {
+        "demographics": demographics,
+        "acedemic_background": acedemic,
+        "activities_history": activities,
+        "payment_history": payment,
+        "learning_history": learning
+    }
+
+
 def render_basic_info(user_details):
     with st.expander("Basic Information", expanded=True):
         col1, col2, col3, col4 = st.columns(4)

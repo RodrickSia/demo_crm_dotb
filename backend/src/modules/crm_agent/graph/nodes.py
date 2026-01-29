@@ -8,10 +8,30 @@ from ..config.prompts import LEAD_SCORE_CRITERIA, NEXT_FOLLOWUP_ACTIONS
 
 # Initialize LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",
+    model="gemini-2.5-flash-lite",
     google_api_key=GOOGLE_API_KEY
 )
 
+
+# TODO Create node in which it is implmeneted by the deepagents with the skillsMD
+"""
+from pydantic import BaseModel, Field
+from deepagents import create_deep_agent, CompiledSubAgent
+
+class SkillOutput(BaseModel):
+    summary: str = Field(description="Analysis summary")
+    score: float = Field(ge=0, le=1)
+
+deep_agent = create_deep_agent(
+    response_format=SkillOutput,  # Structured!
+    skills=["/skills/"]
+)
+
+subagent = CompiledSubAgent(
+    name="structured-skill",
+    description="Returns typed analysis.",
+    runnable=deep_agent
+)"""
 # Structured output node to classify intent
 def classifying_intent(state: AgentState) -> Command[Literal["generate_lead_score", "generate_followup_action", "generate_activity_summary"]]:
     """Route to appropriate node based on intent."""

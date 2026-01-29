@@ -49,7 +49,7 @@ def get_lead_score(
     activities_history: float = Query(0.2, ge=0, le=1),
     payment_history: float = Query(0.3, ge=0, le=1),
     learning_history: float = Query(0.2, ge=0, le=1)
-) -> Any:
+) -> AgentState:
     """Generate AI lead score for a user."""
     weights = WeightedAtributes(
         demographics=demographics,
@@ -72,14 +72,14 @@ def get_lead_score(
     return graph.invoke(state)
 
 @router.get("/{user_id}/activity_summary")
-def get_activity_summary(user_id: str) -> Any:
+def get_activity_summary(user_id: str) -> AgentState:
     """Generate AI activity summary for a user."""
     state = get_all_data_by_user_id(user_id)
     state.intent = "activity_summary"
     return graph.invoke(state)
 
 @router.get("/{user_id}/stage")
-def get_followup_action(user_id: str) -> Any:
+def get_followup_action(user_id: str) -> AgentState:
     """Determine AI-recommended next follow-up action (stage)."""
     state = get_all_data_by_user_id(user_id)
     state.intent = "stage"

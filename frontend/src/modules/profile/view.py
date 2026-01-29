@@ -9,6 +9,7 @@ from src.modules.crm.cards import (
 )
 from src.modules.profile.components import (
     render_user_selector,
+    render_weight_sliders,
     render_basic_info,
     render_data_tabs,
     render_data_summary
@@ -25,6 +26,7 @@ def render_profile_page():
 
     if students_data:
         selected_user_id = render_user_selector(students_data)
+        weights = render_weight_sliders()
         
         user_details = next((s for s in students_data if s.get('id') == selected_user_id), None)
         
@@ -45,7 +47,7 @@ def render_profile_page():
             action_cols = st.columns(3)
             
             with action_cols[0]:
-                render_lead_score_button(selected_user_id)
+                render_lead_score_button(selected_user_id, weights)
             
             with action_cols[1]:
                 render_activity_summary_button(selected_user_id)
