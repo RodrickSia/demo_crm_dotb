@@ -87,7 +87,8 @@ leadScoreDeepAgent = create_deep_agent(
 #         ],
 #     }
 # )
-
+# modelMesage = agentResponse["messages"][-1].content[0]['text'] # A str represent a dict with {score, explanation}
+# print(json.loads(modelMesage))
 def generate_lead_score_deepagent(state: AgentState) -> Command:
     # The response is a structred output enforce by the skill
     agentResponse = leadScoreDeepAgent.invoke(
@@ -108,11 +109,15 @@ def generate_lead_score_deepagent(state: AgentState) -> Command:
             config={"configurable": {"thread_id": "123456"}},
         )
     # TODO make this return to evaluation Node
-    # TODO fetch the agent Response and parse it onto the command
-    # agentResponse = json.loads(agentResponse)
+    modelMesage = agentResponse["messages"][-1].content[0]['text'] # A str represent a dict with {score, explanation}
+    modelMessage = json.loads(modelMesage)
     return Command(
-        goto=END)
-
+        update={
+            "lead_score": int(modelMessage["score"]),
+            "lead_score_explanation": modelMessage["explanation"]
+        },
+        goto=END
+    )
 
 
 def generate_lead_score(state: AgentState) -> Command:
