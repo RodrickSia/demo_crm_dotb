@@ -7,18 +7,17 @@ from ..config.settings import GOOGLE_API_KEY
 from ..config.prompts import LEAD_SCORE_CRITERIA, NEXT_FOLLOWUP_ACTIONS
 from deepagents import create_deep_agent
 from ....shared.utils.helpers import readMDFiles
-from deepagents.backends.utils import create_file_data
 import json
 
 # Initialize LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash-lite",
+    model="gemini-3-flash-preview",
     google_api_key=GOOGLE_API_KEY,
     temperature=0.0 
 )
-LEAD_SCORE_SKILL = "D:\\CRM_DOTB\\backend\\src\\modules\\crm_agent\\graph\\skills\\leadScore\\SKILL.md"
-ACTIVITY_SUMMARY_SKILL = ""
-NEXT_FOLLOWUP_ACTIONS = ""
+LEAD_SCORE_SKILL = "src/modules/crm_agent/graph/skills/leadScore/SKILL.md"
+ACTIVITY_SUMMARY_SKILL = "src/modules/crm_agent/graph/skills/activitySummary/SKILL.md"
+NEXT_FOLLOWUP_ACTIONS = "src/modules/crm_agent/graph/skills/nextFollowupActions/SKILL.md"
 
 # Structured output node to classify intent
 def classifying_intent(state: AgentState) -> Command[Literal["generate_lead_score", "generate_followup_action", "generate_activity_summary"]]:
@@ -38,25 +37,57 @@ def classifying_intent(state: AgentState) -> Command[Literal["generate_lead_scor
 
 # Read MD files
 LeadScoreSkillStr = readMDFiles(LEAD_SCORE_SKILL)
+# TODO: Implement this, this is an issue caused by file loading not supported on window https://github.com/langchain-ai/deepagents/issues/889
+# leadScoreDeepAgent = create_deep_agent(
+#     context_schema=AgentState,
+#     skills=["./skills/leadScore/SKILL.md"],
+#     model=llm, 
+# )
+# agentResponse = leadScoreDeepAgent.invoke(
+#     {   
+        
+#         "messages": [
+#             {
+#                 "role": "user",
+#                 "content": f""" Give me back the leadsocre skill aka the markdown file that you are being given
+#                 """,
+#             }
+#         ],
+#         "files": {"./skills/leadScore/SKILL.md": create_file_data(LeadScoreSkillStr)},
+#     }
+# )
 leadScoreDeepAgent = create_deep_agent(
     context_schema=AgentState,
-    skills=["/src/modules/crm_agent/graph/skills/leadScore/SKILL.md"],
+    system_prompt=LeadScoreSkillStr,
     model=llm, 
 )
-agentResponse = leadScoreDeepAgent.invoke(
-    {   
+# agentResponse = leadScoreDeepAgent.invoke(
+#     {   
         
-        "messages": [
-            {
-                "role": "user",
-                "content": f""" Give me back the leadsocre skill aka the markdown file that you are being given
-                """,
-            }
-        ],
-        "files": {"/.skills/leadScore/SKILL.md": create_file_data(LeadScoreSkillStr)},
-    }
-)
-print(agentResponse)
+#         "messages": [
+#             {
+#                 "role": "user",
+#                 "content": f"""
+#                 You are an expert leadScorer. You will need to analyze this student profile and provide for me a lead score
+#                 Here is the student data:
+#                 age 15
+#                 grade: 10
+#                 math score 7.5
+#                 english score 8.0
+#                 payment history: ok
+#                 engagement: high
+#                 You are also provided the weights for each criteria:
+#     demographics: float = 0.1
+#     acedemic_background: float = 0.2
+#     activities_history: float = 0.2
+#     payment_history: float = 0.3
+#     learning_history: float = 0.3   
+#                 """,
+#             }
+#         ],
+#     }
+# )
+
 def generate_lead_score_deepagent(state: AgentState) -> Command:
     # The response is a structred output enforce by the skill
     agentResponse = leadScoreDeepAgent.invoke(
@@ -73,7 +104,6 @@ def generate_lead_score_deepagent(state: AgentState) -> Command:
                     """,
                 }
             ],
-            "files": {"/.skills/leadScore/SKILL.md": create_file_data(LeadScoreSkillStr)},
         },
             config={"configurable": {"thread_id": "123456"}},
         )
