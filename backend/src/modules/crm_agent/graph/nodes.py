@@ -10,7 +10,7 @@ import json
 
 # Initialize LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemma-3-27b-it",
+    model="gemini-3-flash-pro",
     google_api_key=GOOGLE_API_KEY,
     temperature=0.0 
 )
