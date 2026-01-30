@@ -44,21 +44,29 @@ def get_lead_score(
     state = get_all_data_by_user_id(user_id)
     state.intent = "score"
     state.weights = weights
-    return graph.invoke(state)
+    resultState = graph.invoke(state)
+    assert type(resultState) is AgentState, "The parsing of agent state being returned failed"
+    return resultState
 
 @router.get("/{user_id}/activity_summary")
 def get_activity_summary(user_id: str) -> AgentState:
     """Generate AI activity summary for a user."""
     state = get_all_data_by_user_id(user_id)
     state.intent = "activity_summary"
-    return graph.invoke(state)
+    resultState = graph.invoke(state)
+    assert type(resultState) is AgentState, "The parsing of agent state being returned failed"
+    return resultState
+
 
 @router.get("/{user_id}/stage")
 def get_followup_action(user_id: str) -> AgentState:
     """Determine AI-recommended next follow-up action (stage)."""
     state = get_all_data_by_user_id(user_id)
     state.intent = "stage"
-    return graph.invoke(state)
+    resultState = graph.invoke(state)
+    assert type(resultState) is AgentState, "The parsing of agent state being returned failed"
+    return resultState
+
 
 # Keep the generic route for backward compatibility with older frontend calls if any
 @router.get("/{user_id}/{intent}")

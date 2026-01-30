@@ -7,6 +7,7 @@ app = FastAPI(
     description="API for CRM system with user data management",
     version="1.0.0"
 )
+# TODO: Add api versioning by using a global api folder with v1, v2, ect and using the individual routers from the modules
 
 app.include_router(user_router)
 app.include_router(agent_router)
