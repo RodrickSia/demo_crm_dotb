@@ -1,23 +1,20 @@
 # CRM DOTB - AI-Powered Modular CRM
 
-A modern CRM system built with a **Modular Monolith** architecture, featuring AI-driven insights for lead management.
+
+A modern CRM system featuring AI-driven insights for lead management.
 
 ## 🚀 Project Overview
 
 CRM DOTB is designed to manage student relationships for educational institutions. It provides a comprehensive dashboard for user data management, integrated with a powerful AI agent that generates lead scores, activity summaries, and recommended next steps using **LangGraph** and **Google Gemini**.
 
-## 🏗️ Architecture: Modular Monolith
 
-This project follows a Modular Monolith architecture pattern in both backend and frontend. This design promotes:
-- **High Cohesion**: Grouping related logic (router, service, models, config) within business domain modules.
-- **Low Coupling**: Modules communicate through well-defined service layers.
-- **Scalability**: Easy to transition to microservices if needed in the future.
+
 
 ### Backend Structure (`/backend/src`)
 - **`modules/users`**: Core user data management (Student profiles, journeys, attendance, etc.).
 - **`modules/crm_agent`**: AI reasoning engine built with LangGraph.
-  - `graph/`: LangGraph definition (nodes, state, graph).
-  - `config/`: AI-specific prompts and configuration.
+   - `graph/`: LangGraph definition (nodes, state, graph).
+   - `config/`: AI-specific prompts and configuration.
 - **`shared/`**: Global utilities and helpers.
 - **`config/`**: Database and system-wide settings.
 
@@ -33,20 +30,22 @@ This project follows a Modular Monolith architecture pattern in both backend and
 - **Frontend**: Streamlit, Pandas, Requests.
 - **Infrastructure**: Conda for environment management.
 
+
 ## ⚙️ Setup & Installation
 
 ### Backend Setup
-1. Create and activate the conda environment:
-   ```bash
-   conda create -n backend python=3.13
-   conda activate backend
+1. Create a `.env` file in the `backend` directory with the following secrets (replace values as needed):
+   ```env
+   SECRET_KEY=your_secret_key
+   DB_PASSWORD=your_db_password
+   API_TOKEN=your_api_token
    ```
-2. Install dependencies:
+2. Build and run the backend using Docker Compose:
    ```bash
    cd backend
-   pip install -r requirements.txt
+   docker compose up --build
    ```
-3. (Optional) Configure environment variables in `backend/src/modules/crm_agent/config/settings.py` (e.g., Gemini API Key).
+   The API will be available at `http://127.0.0.1:8000`. You can visit `http://127.0.0.1:8000/docs` for the interactive Swagger UI.
 
 ### Frontend Setup
 1. Ensure you have the necessary requirements for Streamlit:
@@ -55,15 +54,11 @@ This project follows a Modular Monolith architecture pattern in both backend and
    pip install -r requirements.txt
    ```
 
+
 ## 🏃 Running the Application
 
 ### 1. Start the Backend API
-```bash
-conda activate backend
-cd backend
-python -m src.main
-```
-The API will be available at `http://127.0.0.1:8000`. You can visit `http://127.0.0.1:8000/docs` for the interactive Swagger UI.
+See the Backend Setup section above for Docker Compose instructions.
 
 ### 2. Start the Frontend
 ```bash
